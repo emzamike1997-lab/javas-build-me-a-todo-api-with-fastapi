@@ -1,2 +1,3 @@
-# javas-build-me-a-todo-api-with-fastapi
-JAVAS: build me a todo API with FastAPI
+# build me a todo API with FastAPI
+FastAPI application deployed on Railway.
+Visit /docs for interactive API documentation.
