@@ -31,50 +31,50 @@ class TodoUpdate(BaseModel):
     title: str | None
     completed: bool | None
 
-# GET / endpoint returning API info
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the Todo API"}
-
-# GET /health endpoint returning {"status": "healthy"}
+# GET /health endpoint
 @app.get("/health")
-def read_health():
+def get_health():
     return {"status": "healthy"}
 
-# GET /todos endpoint returning all todos
+# GET / endpoint
+@app.get("/")
+def get_api_info():
+    return {"api": "Todo API", "version": "1.0"}
+
+# GET /todos endpoint
 @app.get("/todos", response_model=List[Todo])
-def read_todos():
+def get_todos():
     return list(todos.values())
 
-# GET /todos/{todo_id} endpoint returning a single todo
-@app.get("/todos/{todo_id}", response_model=Todo)
-def read_todo(todo_id: int):
-    if todo_id not in todos:
+# GET /todos/{id} endpoint
+@app.get("/todos/{id}", response_model=Todo)
+def get_todo(id: int):
+    if id not in todos:
         raise HTTPException(status_code=404, detail="Todo not found")
-    return todos[todo_id]
+    return todos[id]
 
-# POST /todos endpoint creating a new todo
+# POST /todos endpoint
 @app.post("/todos", response_model=Todo)
 def create_todo(todo: TodoCreate):
     new_id = max(todos.keys(), default=0) + 1
     todos[new_id] = Todo(id=new_id, title=todo.title, completed=todo.completed)
     return todos[new_id]
 
-# PUT /todos/{todo_id} endpoint updating a single todo
-@app.put("/todos/{todo_id}", response_model=Todo)
-def update_todo(todo_id: int, todo: TodoUpdate):
-    if todo_id not in todos:
+# PUT /todos/{id} endpoint
+@app.put("/todos/{id}", response_model=Todo)
+def update_todo(id: int, todo: TodoUpdate):
+    if id not in todos:
         raise HTTPException(status_code=404, detail="Todo not found")
-    if todo.title is not None:
-        todos[todo_id].title = todo.title
+    if todo.title:
+        todos[id].title = todo.title
     if todo.completed is not None:
-        todos[todo_id].completed = todo.completed
-    return todos[todo_id]
+        todos[id].completed = todo.completed
+    return todos[id]
 
-# DELETE /todos/{todo_id} endpoint deleting a single todo
-@app.delete("/todos/{todo_id}")
-def delete_todo(todo_id: int):
-    if todo_id not in todos:
+# DELETE /todos/{id} endpoint
+@app.delete("/todos/{id}")
+def delete_todo(id: int):
+    if id not in todos:
         raise HTTPException(status_code=404, detail="Todo not found")
-    del todos[todo_id]
+    del todos[id]
     return {"message": "Todo deleted"}
